@@ -3,8 +3,8 @@
     <script type="text/javascript" src="two.js"></script>
     <style>
       body, #draw-shapes {
-        background-color: #2F2F2B;
-        padding: 0;
+        background-color: rgba(5, 5, 0, 0.5);
+        margin: 0;
       }
     </style>
   </head>
@@ -34,11 +34,14 @@
           this.dy += this.dy < 0 ? 0.1 : -0.1;
         };
 
-      this.saturation = function(){
-        dvector = distance(this.dx, this.dy, 0, 0);
-        return dvector / 5;
-      };
+        this.saturation = function(){
+          dvector = distance(this.dx, this.dy, 0, 0);
+          return dvector / 5;
+        };
       }
+
+      var backgroundSaturation = 0.5;
+      var backgroundIncrement = 0.5/300;
 
       var elem = document.getElementById('draw-shapes');
       var originX = elem.offsetLeft;
@@ -76,6 +79,9 @@
         rect.fill = 'rgba(0, 200, 255, 0.75)';
 
         rects.push(rect);
+
+        document.getElementById('draw-shapes').style.backgroundColor =
+          'rgba(5,5,0,'+ (backgroundSaturation += backgroundIncrement) + ')';
 
         if (rects.length < 300){
           setTimeout(addShape, 1000);
