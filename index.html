@@ -1,0 +1,121 @@
+<html>
+  <head>
+    <script type="text/javascript" src="two.js"></script>
+  </head>
+  <body>
+    <div id="draw-shapes"></div>
+    <script type="text/javascript">
+      var updateSize = function() {
+        var height = window.innerHeight;
+        var width = window.innerWidth;
+        params.width = width;
+        params.height = height;
+        two.width = width;
+        two.height = height;
+      };
+
+      window.onresize = updateSize;
+      var Shape = function(x, y) {
+        this.x = x;
+        this.y = y;
+        this.dx = 1;
+        this.dy = 1;
+
+        this.move = function(){
+          this.x += this.dx;
+          this.y += this.dy;
+          this.dx += this.dx < 0 ? 0.1 : -0.1;
+          this.dy += this.dy < 0 ? 0.1 : -0.1;
+        };
+      }
+
+      var elem = document.getElementById('draw-shapes');
+      var originX = elem.offsetLeft;
+      var originY = elem.offsetTop;
+      var params = { width: window.innerWidth, height: window.innerHeight }
+      var two = new Two(params).appendTo(elem);
+
+      var mouseX = -100;
+      var mouseY = -100;
+
+      var shape1 = new Shape(15, 15);
+
+      var rect1 = two.makeRectangle(shape1.x, shape1.y, 20, 20);
+      rect1.fill = 'rgba(0, 200, 255, 0.75)';
+
+      var shape2 = new Shape(200, 200);
+
+      var shapes = [shape1, shape2];
+
+      var rect2 = two.makeRectangle(shape2.x, shape2.y, 20, 20);
+      rect2.fill = 'rgba(0, 200, 255, 0.75)';
+
+      var rects = [rect1, rect2]
+
+      var distance = function(x1, y1, x2, y2) {
+        return Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)) );
+      }
+
+      var addShape = function() {
+        var shape = new Shape(mouseX, mouseY);
+
+        shapes.push(shape);
+
+        var rect = two.makeRectangle(shape.x, shape.y, 20, 20);
+        rect.fill = 'rgba(0, 200, 255, 0.75)';
+
+        rects.push(rect);
+
+        if (rects.length < 1000){
+          setTimeout(addShape, 1000);
+        }
+      };
+
+      setTimeout(addShape, 1000);
+
+      two.bind('update', function(frameCount) {
+          var shape;
+          for(var i in shapes) {
+            shape = shapes[i];
+            rects[i].translation.set(shape.x, shape.y);
+            shape.move();
+
+            var mouseDistance = distance(mouseX, mouseY, shape.x, shape.y);
+
+            if( mouseDistance <= 70 ) {
+              shape.dx += mouseX > shape.x ? -1 : 1;
+              shape.dy += mouseY > shape.y ? -1 : 1;
+            }
+
+            if( shape.y + 20 >= params.height - shape.dy && shape.dy > 0 ) {
+              shape.dy = -shape.dy;
+            }else if ( shape.y + shape.dy <= 0 && shape.dy < 0) {
+              shape.dy = -shape.dy;
+            }
+            if( shape.x + 20 >= params.width - shape.dx && shape.dx > 0) {
+              shape.dx = -shape.dx;
+            }else if (shape.x + shape.dx <= 0 && shape.dx < 0) {
+              shape.dx = -shape.dx;
+            }
+
+            for(var j in shapes) {
+              if(i != j){
+                otherShape = shapes[j];
+                xDistance = shape.x - otherShape.x;
+                yDistance = shape.y - otherShape.y;
+                if( (xDistance >= -20 && xDistance <= 20) && (yDistance >= -20 && yDistance <= 20)){
+                  shape.dx = xDistance >= 0 ? 1 : -1;
+                  shape.dy = yDistance >= 0 ? 1 : -1;
+                }
+              }
+            }
+          }
+      }).play();
+
+      elem.addEventListener('mousemove', function(e) {
+        mouseX = e.pageX;
+        mouseY = e.pageY;
+      });
+    </script>
+  </body>
+</html>
