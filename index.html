@@ -1,6 +1,12 @@
 <html>
   <head>
     <script type="text/javascript" src="two.js"></script>
+    <style>
+      body, #draw-shapes {
+        background-color: #2F2F2B;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="draw-shapes"></div>
@@ -27,6 +33,11 @@
           this.dx += this.dx < 0 ? 0.1 : -0.1;
           this.dy += this.dy < 0 ? 0.1 : -0.1;
         };
+
+      this.saturation = function(){
+        dvector = distance(this.dx, this.dy, 0, 0);
+        return dvector / 5;
+      };
       }
 
       var elem = document.getElementById('draw-shapes');
@@ -78,6 +89,7 @@
           for(var i in shapes) {
             shape = shapes[i];
             rects[i].translation.set(shape.x, shape.y);
+            rects[i].fill = 'rgba(0, 200, 255, ' + shape.saturation() + ')';
             shape.move();
 
             var mouseDistance = distance(mouseX, mouseY, shape.x, shape.y);
