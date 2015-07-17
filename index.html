@@ -82,11 +82,11 @@
 
         document.getElementById('draw-shapes').style.backgroundColor =
           'rgba(5,5,0,'+ (backgroundSaturation += backgroundIncrement) + ')';
-
-        while (rects.length < 300){
-          addShape();
-        }
       };
+      
+      while (rects.length < 300){
+        addShape();
+      }
 
       // setTimeout(addShape, 1000);
 
